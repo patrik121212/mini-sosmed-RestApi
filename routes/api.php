@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\LikesController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\JWTAuthController;
 
 
 Route::get('/user', function (Request $request) {
@@ -14,6 +17,10 @@ Route::get('/user', function (Request $request) {
 
 
 Route::prefix('v1')->group(function () {
+    // handle user authentication
+    Route::post('register', [JWTAuthController::class, 'register']);
+
+
     // menghandle posts
     Route::prefix('posts')->group(function () {
         Route::get('/', [PostsController::class, 'index']); //mengambil semua data posts
@@ -23,9 +30,22 @@ Route::prefix('v1')->group(function () {
         Route::delete('{id}', [PostsController::class, 'destroy']); //menghapus data post berdasarkan id
 
     });
-
+    // menghandle comments
     Route::prefix('comments')->group(function () {
         Route::post('/', [CommentsControler::class, 'store']);
         Route::delete('{id}', [CommentsControler::class, 'destroy']);
+    });
+    // menghandle likes
+    Route::prefix('likes')->group(function () {
+        Route::post('/', [LikesController::class, 'store']); //menyimpan data like baru
+        Route::delete('{id}', [LikesController::class, 'destroy']); //menghapus data like berdasarkan id
+    });
+
+    // menghandle messages
+    Route::prefix('messages')->group(function () {
+        Route::post('/', [MessagesController::class, 'store']); //menyimpan data message baru
+        Route::get('{id}', [MessagesController::class, 'show']); //mengambil atau melihat data message berdasarkan id
+        Route::get('/getMessages/{user_id}', [MessagesController::class, 'getMessages']); //menampilkan pesan berdasrakan user_id
+        Route::delete('{id}', [MessagesController::class, 'destroy']); //menghapus data message berdarkan id
     });
 });
