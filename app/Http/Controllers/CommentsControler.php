@@ -39,4 +39,20 @@ class CommentsControler extends Controller
             'data' => $comment
         ]);
     }
+
+    public function destroy($id)
+    {
+        $comment = Comment::find($id);
+        if (!$comment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Komentar tidak ditemukan'
+            ]);
+        }
+        $comment->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil menghapus komentar'
+        ]);
+    }
 }
