@@ -40,4 +40,19 @@ class JWTAuthController extends Controller
         $token = JWTAuth::fromUser($user);
         return response()->json(compact('user', 'token'), 201);
     }
+
+    //Handling login user
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        $token = JWTAuth::attempt($credentials);
+        if (!$token) {
+            return response()->json(['error' => 'Invalid Credentials'], 401);
+        }
+        return response()->json([
+            'token' => $token,
+            'message' => 'Login successful'
+
+        ]);
+    }
 }
